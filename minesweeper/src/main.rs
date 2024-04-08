@@ -131,7 +131,7 @@ impl Board {
         while !self.game_over {
             self.display();
             let mut input = String::new();
-            println!("Enter coordinates to reveal or flag (e.g., r 3,2 or f 3,2 for reveal or flag):");
+            println!("Enter coordinates to reveal or flag (e.g., r 1,1 or f 10,10 for reveal or flag):");
             io::stdin().read_line(&mut input).unwrap();
             let parts: Vec<&str> = input.trim().split_whitespace().collect();
 
@@ -140,6 +140,10 @@ impl Board {
                 let coords: Vec<&str> = parts[1].split(',').collect();
                 if coords.len() == 2 {
                     if let (Ok(x), Ok(y)) = (coords[0].parse::<usize>(), coords[1].parse::<usize>()) {
+                        // 사용자가 1부터 10으로 입력했다고 가정하고 내부적으로 0부터 9로 조정
+                        let x = x - 1;
+                        let y = y - 1;
+
                         if x < self.width && y < self.height {
                             match cmd {
                                 "r" => self.reveal(x, y),
@@ -147,10 +151,10 @@ impl Board {
                                 _ => println!("Unknown command! Use 'r' to reveal or 'f' to flag."),
                             }
                         } else {
-                            println!("Coordinates are out of bounds!");
+                            println!("Coordinates are out of bounds! Please enter values between 1 and {}", self.width);
                         }
                     } else {
-                        println!("Invalid coordinates!");
+                        println!("Invalid coordinates! Please enter numeric values.");
                     }
                 } else {
                     println!("Please enter a command followed by coordinates in the format cmd x,y!");
@@ -160,6 +164,7 @@ impl Board {
             }
         }
     }
+
 }
 
 fn main() {
